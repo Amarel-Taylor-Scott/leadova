@@ -1,58 +1,58 @@
 # Leadova
 
-Leadova is a private full-stack lead-generation and outreach product. The repo
-contains a TypeScript/Express backend, a SvelteKit frontend, database
-migrations, Dockerfiles, Compose config, Caddy config, and a Makefile.
+[![CI](https://github.com/Amarel-Taylor-Scott/leadova/actions/workflows/ci.yml/badge.svg)](https://github.com/Amarel-Taylor-Scott/leadova/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node 22+](https://img.shields.io/badge/node-22+-green.svg)](https://nodejs.org/)
 
-## Current Shape
+Leadova is a full-stack lead-generation and outreach app: country/vertical
+landing pages, an agent intake flow, a subscriber dashboard, and a chatbot
+service. It pairs a TypeScript/Express API with a SvelteKit frontend, Knex
+migrations, and Docker/Caddy deployment config.
+
+## Architecture
 
 ```text
 leadova/
-├── backend/        Express API, migrations, v1 routes, chatbot service
-├── frontend/       SvelteKit app with country, vertical, pricing, dashboard,
-│                   admin, agent, blog, contact, and auth routes
-├── docker-compose.yml
+├── backend/        Express 5 API (TypeScript, ESM), Knex/Postgres migrations,
+│                   v1 routes, JWT auth, chatbot service, Zod validation, Pino
+├── frontend/       SvelteKit app — country/vertical pages, agent intake,
+│                   pricing, dashboard, admin, blog, contact, auth
+├── docker-compose.yml   Postgres + Redis + backend + frontend + Caddy
 ├── Caddyfile
 ├── Makefile
-└── package.json
+└── package.json         npm workspaces (backend + frontend), Node 22+
 ```
 
-## Scripts
+Stack: **Express 5 · Knex · Postgres · Redis (ioredis) · JWT · Zod · Pino**
+(backend) and **SvelteKit · Svelte 4 · Vite · TypeScript** (frontend).
 
-The root package uses workspaces and requires Node 22 or newer.
+## Build & develop
 
 ```bash
-npm run build
-npm run lint
-npm test
+npm install            # installs both workspaces (Node 22+)
+npm run build          # builds backend (tsc) and frontend (vite) — CI-verified
+npm run lint           # typecheck both workspaces
+npm test               # workspace tests (vitest)
 ```
 
-Development is Docker-first:
+Running the full app (API + DB + chatbot/outreach flows) is Docker-first and
+needs Postgres and Redis:
 
 ```bash
-npm run dev
-npm run dev:down
+cp .env.example .env   # set DATABASE_URL, REDIS_URL, JWT_SECRET, etc.
+npm run dev            # docker compose up -d --build
 npm run dev:logs
+npm run dev:down
 ```
 
-## Verification Snapshot
+> CI verifies install + build + typecheck. Runtime paths (migrations, lead
+> import, chatbot, outreach) require a database and external credentials and are
+> not exercised in CI.
 
-Last static inventory pass: 2026-05-24.
+## Related repos
 
-- Package manifests were parsed.
-- Source shape was inspected: 58 files under `backend/src` and `frontend/src`.
-- Runtime commands were not run because this app uses Docker, databases, and
-  external service integrations.
+- `sponsoragent` — adjacent outreach-automation product on a similar stack.
 
-## Operational Boundaries
+## License
 
-During broad ecosystem cleanup, prefer static checks and manifest parsing. Do
-not run Docker, migrations, seeders, lead import, checkout, outreach, or
-deployment commands unless the session is explicitly scoped for application
-verification.
-
-## Related Repos
-
-- `agency_email_scraper` is adjacent lead-source infrastructure.
-- `sponsoragent` is an adjacent outreach automation product.
-- `adstack` is an adjacent advertising/product infrastructure repo.
+MIT — see [LICENSE](LICENSE).

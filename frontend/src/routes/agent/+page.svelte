@@ -334,9 +334,11 @@
                       </select>
                     </div>
                   {:else}
+                    <!-- one-way value + on:input: Svelte forbids bind:value with a dynamic type -->
                     <input
                       type={field.type === 'email' ? 'email' : field.type === 'tel' ? 'tel' : field.type === 'number' ? 'number' : 'text'}
-                      bind:value={formValues[field.name]}
+                      value={formValues[field.name] ?? ''}
+                      on:input={(e) => { formValues[field.name] = e.currentTarget.value; formValues = formValues; }}
                       required={field.required}
                       placeholder={field.label}
                       class="big-input"
